@@ -1,0 +1,19 @@
+{
+  "name": "daily-stoic-website",
+  "version": "1.0.0",
+  "description": "A minimalistic website providing one stoic meditation per day from The Daily Stoic book",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "parse": "node scripts/parseBook.js",
+    "setup": "npm run parse && npm start"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "sqlite3": "^5.1.6"
+  },
+  "keywords": ["stoicism", "philosophy", "daily", "meditation"],
+  "author": "",
+  "license": "MIT"
+} 
