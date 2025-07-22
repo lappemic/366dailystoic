@@ -8,7 +8,7 @@ A minimalistic website that provides one stoic meditation per day from "The Dail
 - Clean, readable design with elegant typography
 - Responsive layout for mobile and desktop
 - Minimal tech stack for easy deployment
-- SQLite database stored locally
+- SQLite database with pre-populated meditations
 
 ## Tech Stack
 
@@ -24,25 +24,13 @@ A minimalistic website that provides one stoic meditation per day from "The Dail
    npm install
    ```
 
-2. **Parse the book and create database**:
-   ```bash
-   npm run parse
-   ```
-
-3. **Start the server**:
+2. **Start the server**:
    ```bash
    npm start
    ```
 
-4. **Visit the website**:
+3. **Visit the website**:
    Open your browser to `http://localhost:3000`
-
-## Quick Setup
-
-Run everything in one command:
-```bash
-npm run setup
-```
 
 ## API Endpoints
 
@@ -55,8 +43,6 @@ npm run setup
 
 ```
 daily-stoic-website/
-├── data/
-│   └── TheDailyStoic.txt          # Source text file
 ├── deploy/                        # VPS deployment configuration
 │   ├── nginx.conf                 # Nginx reverse proxy config
 │   ├── daily-stoic.service        # Systemd service file
@@ -66,9 +52,7 @@ daily-stoic-website/
 │   ├── index.html                 # Main HTML page
 │   ├── style.css                  # Styling
 │   └── script.js                  # Client-side JavaScript
-├── scripts/
-│   └── parseBook.js               # Text parser script
-├── daily-stoic.db                 # SQLite database (created after parsing)
+├── daily-stoic.db                 # SQLite database with meditations
 ├── ecosystem.config.js            # PM2 configuration
 ├── server.js                      # Express server
 ├── package.json                   # Dependencies and scripts
@@ -79,14 +63,14 @@ daily-stoic-website/
 
 ### Automated Deployment (Recommended)
 
-1. **Setup your VPS** (run on your VPS):
+1. **Setup your VPS** (run on your VPS as root):
    ```bash
    curl -sSL https://raw.githubusercontent.com/yourusername/daily-stoic-website/main/deploy/setup-vps.sh | bash
    ```
 
 2. **Deploy from your local machine**:
    ```bash
-   ./deploy/deploy.sh user@your-vps /var/www/daily-stoic your-domain.com
+   ./deploy/deploy.sh devuser@your-vps your-domain.com
    ```
 
 3. **Setup SSL certificate** (run on your VPS):
@@ -98,14 +82,13 @@ daily-stoic-website/
 
 1. **Copy files to your VPS**:
    ```bash
-   rsync -av --exclude node_modules . user@your-vps:/path/to/app/
+   rsync -av --exclude node_modules . devuser@your-vps:/home/devuser/projects/daily-stoic/
    ```
 
-2. **On your VPS, install dependencies and setup**:
+2. **On your VPS, install dependencies**:
    ```bash
-   cd /path/to/app
+   cd /home/devuser/projects/daily-stoic
    npm install --production
-   npm run parse
    ```
 
 3. **Option A: Run with systemd service**:

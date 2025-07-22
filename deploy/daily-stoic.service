@@ -5,8 +5,8 @@ After=network.target
 
 [Service]
 Type=simple
-User=www-data
-WorkingDirectory=/var/www/daily-stoic
+User=devuser
+WorkingDirectory=/home/devuser/projects/daily-stoic
 ExecStart=/usr/bin/node server.js
 Restart=on-failure
 RestartSec=10
@@ -21,7 +21,7 @@ NoNewPrivileges=yes
 PrivateTmp=yes
 ProtectSystem=strict
 ProtectHome=yes
-ReadWritePaths=/var/www/daily-stoic
+ReadWritePaths=/home/devuser/projects/daily-stoic
 
 [Install]
 WantedBy=multi-user.target 

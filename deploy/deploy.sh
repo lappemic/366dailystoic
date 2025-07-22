@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # Daily Stoic Website Deployment Script
-# Usage: ./deploy.sh [user@host] [app_path]
+# Usage: ./deploy.sh [user@host] [domain]
 
 set -e
 
 # Configuration
-USER_HOST=${1:-"user@your-vps"}
-APP_PATH=${2:-"/var/www/daily-stoic"}
-DOMAIN=${3:-"your-domain.com"}
+USER_HOST=${1:-"devuser@your-vps"}
+DOMAIN=${2:-"your-domain.com"}
+APP_PATH="/home/devuser/projects/daily-stoic"
 
 echo "🚀 Deploying Daily Stoic Website to $USER_HOST:$APP_PATH"
 
@@ -20,34 +20,30 @@ fi
 
 # Create app directory on VPS
 echo "📁 Creating application directory..."
-ssh $USER_HOST "sudo mkdir -p $APP_PATH && sudo chown -R \$USER:www-data $APP_PATH"
+ssh $USER_HOST "mkdir -p $APP_PATH"
 
-# Sync files to VPS (excluding node_modules and database)
+# Sync files to VPS (excluding node_modules and logs)
 echo "📦 Syncing files to VPS..."
 rsync -av --progress \
     --exclude 'node_modules/' \
-    --exclude 'daily-stoic.db' \
     --exclude '.git/' \
     --exclude 'logs/' \
     --exclude '.DS_Store' \
     ./ $USER_HOST:$APP_PATH/
 
-# Install dependencies and setup on VPS
+# Install dependencies on VPS
 echo "⚙️  Installing dependencies on VPS..."
 ssh $USER_HOST "cd $APP_PATH && npm install --production"
 
-# Parse the book and create database
-echo "📚 Parsing book and creating database..."
-ssh $USER_HOST "cd $APP_PATH && npm run parse"
-
 # Set proper permissions
 echo "🔒 Setting permissions..."
-ssh $USER_HOST "sudo chown -R \$USER:www-data $APP_PATH && sudo chmod -R 755 $APP_PATH"
+ssh $USER_HOST "chmod -R 755 $APP_PATH"
 
 # Setup systemd service
 echo "🔧 Setting up systemd service..."
 ssh $USER_HOST "sudo cp $APP_PATH/deploy/daily-stoic.service /etc/systemd/system/ && \
-    sudo sed -i 's|/var/www/daily-stoic|$APP_PATH|g' /etc/systemd/system/daily-stoic.service && \
+    sudo sed -i 's|/home/devuser/projects/daily-stoic|$APP_PATH|g' /etc/systemd/system/daily-stoic.service && \
+    sudo sed -i 's|www-data|devuser|g' /etc/systemd/system/daily-stoic.service && \
     sudo systemctl daemon-reload && \
     sudo systemctl enable daily-stoic && \
     sudo systemctl restart daily-stoic"

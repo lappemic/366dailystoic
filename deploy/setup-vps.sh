@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # VPS Setup Script for Daily Stoic Website
-# For Ubuntu/Debian systems
+# For Ubuntu/Debian systems with existing devuser
 # Run as: curl -sSL https://raw.githubusercontent.com/yourusername/daily-stoic-website/main/deploy/setup-vps.sh | bash
 
 set -e
@@ -36,10 +36,9 @@ sudo ufw allow 80/tcp
 sudo ufw allow 443/tcp
 sudo ufw --force enable
 
-# Create application user and directory
-echo "👤 Creating application user and directory..."
-sudo useradd -r -s /bin/false daily-stoic || true
-sudo mkdir -p /var/www/daily-stoic
+# Create projects directory for devuser
+echo "📁 Creating projects directory..."
+sudo -u devuser mkdir -p /home/devuser/projects
 sudo mkdir -p /var/log/daily-stoic
 
 # Set up log rotation
@@ -51,7 +50,7 @@ sudo tee /etc/logrotate.d/daily-stoic > /dev/null <<EOF
     rotate 14
     compress
     notifempty
-    create 0640 daily-stoic daily-stoic
+    create 0640 devuser devuser
 }
 EOF
 
@@ -71,6 +70,7 @@ sudo tee /var/www/html/index.html > /dev/null <<EOF
     <h1>VPS Setup Complete!</h1>
     <p>Your server is ready for Daily Stoic Website deployment.</p>
     <p>Run the deployment script to install the application.</p>
+    <p>User: devuser | Projects: /home/devuser/projects</p>
 </body>
 </html>
 EOF
@@ -84,10 +84,15 @@ echo "   ✓ nginx $(nginx -v 2>&1 | cut -d/ -f2)"
 echo "   ✓ PM2 $(pm2 --version)"
 echo "   ✓ certbot $(certbot --version | head -n1)"
 echo ""
+echo "🔧 Configuration:"
+echo "   ✓ Projects directory: /home/devuser/projects"
+echo "   ✓ User: devuser"
+echo "   ✓ Firewall configured (ports 22, 80, 443)"
+echo ""
 echo "🔧 Next steps:"
 echo "   1. Configure your domain's DNS to point to this server"
 echo "   2. Run the deployment script from your local machine:"
-echo "      ./deploy/deploy.sh user@your-server your-domain.com"
+echo "      ./deploy/deploy.sh devuser@your-server your-domain.com"
 echo "   3. Setup SSL certificate:"
 echo "      sudo certbot --nginx -d your-domain.com"
 echo ""

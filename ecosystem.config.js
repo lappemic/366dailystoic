@@ -14,9 +14,9 @@ module.exports = {
       NODE_ENV: 'production',
       PORT: 3000
     },
-    error_file: './logs/err.log',
-    out_file: './logs/out.log',
-    log_file: './logs/combined.log',
+    error_file: '/var/log/daily-stoic/err.log',
+    out_file: '/var/log/daily-stoic/out.log',
+    log_file: '/var/log/daily-stoic/combined.log',
     time: true
   }]
 }; 
