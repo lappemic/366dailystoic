@@ -71,6 +71,9 @@ function showMeditation(data) {
     loadingEl.style.display = 'none';
     meditationEl.style.display = 'block';
     errorEl.style.display = 'none';
+    
+    // Track meditation view
+    trackMeditationView(data);
 }
 
 // Show error
@@ -110,4 +113,27 @@ function init() {
 }
 
 // Start the app when DOM is loaded
-document.addEventListener('DOMContentLoaded', init); 
+document.addEventListener('DOMContentLoaded', init);
+
+// Enhanced Umami tracking
+window.addEventListener('load', function() {
+    // Wait for umami to be available
+    setTimeout(() => {
+        if (typeof umami !== 'undefined') {
+            umami.track('meditation_loaded');
+            console.log('Umami tracking initialized');
+        } else {
+            console.warn('Umami not loaded');
+        }
+    }, 1000);
+});
+
+// Track meditation views
+function trackMeditationView(data) {
+    if (typeof umami !== 'undefined') {
+        umami.track('meditation_view', {
+            date: data.date_key,
+            title: data.title
+        });
+    }
+} 
